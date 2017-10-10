@@ -9,7 +9,7 @@ const bot = linebot({
 
 
 bot.on('message', function(event) {
-    console.log(event); //把收到訊息的 event 印出來看看
+    console.log(event); /** print event */
   });
   
   const app = express();
