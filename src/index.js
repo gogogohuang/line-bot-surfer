@@ -7,6 +7,7 @@ const bot = linebot({
   channelAccessToken: "liLIIlI5QQQ3FYSbY9kOtW6sREW+cH7Rmu1mGu72Ci3Fofv9H63h1Cwzx/UiHUJ1HHhkHwZon5MNNl8e37X3oYou47I2677QWLA6VT5km3RadMa2ln59k4IuKSfrBUHIOAYV5tTceqLhHzM/MVYQbgdB04t89/1O/w1cDnyilFU="
 });
 
+console.log(bot);
 
 bot.on('message', function(event) {
     console.log(event); /** print event */
@@ -21,3 +22,4 @@ bot.on('message', function(event) {
     const port = server.address().port;
     console.log("App now running on port", port);
   });
+
