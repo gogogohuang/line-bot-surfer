@@ -24,7 +24,6 @@ bot.on('message', function (event) {
 
 var app = (0, _express2.default)();
 var linebotParser = bot.parser();
-console.log(linebotParser);
 app.post('/', linebotParser);
 
 //因為 express 預設走 port 3000，而 heroku 上預設卻不是，要透過下列程式轉換
