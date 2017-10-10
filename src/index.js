@@ -21,3 +21,5 @@ bot.on('message', function(event) {
     const port = server.address().port;
     console.log("App now running on port", port);
   });
+
+  bot.listen('/linewebhook', 3000);
