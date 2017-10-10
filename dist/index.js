@@ -16,10 +16,17 @@ var bot = (0, _linebot2.default)({
   channelAccessToken: "liLIIlI5QQQ3FYSbY9kOtW6sREW+cH7Rmu1mGu72Ci3Fofv9H63h1Cwzx/UiHUJ1HHhkHwZon5MNNl8e37X3oYou47I2677QWLA6VT5km3RadMa2ln59k4IuKSfrBUHIOAYV5tTceqLhHzM/MVYQbgdB04t89/1O/w1cDnyilFU="
 });
 
-console.log(bot);
-
 bot.on('message', function (event) {
-  console.log(event); /** print event */
+  if (event.message.type = 'text') {
+    var msg = event.message.text;
+    event.reply(msg).then(function (data) {
+      // success 
+      console.log(msg);
+    }).catch(function (error) {
+      // error 
+      console.log('error');
+    });
+  }
 });
 
 var app = (0, _express2.default)();

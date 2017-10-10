@@ -7,19 +7,26 @@ const bot = linebot({
   channelAccessToken: "liLIIlI5QQQ3FYSbY9kOtW6sREW+cH7Rmu1mGu72Ci3Fofv9H63h1Cwzx/UiHUJ1HHhkHwZon5MNNl8e37X3oYou47I2677QWLA6VT5km3RadMa2ln59k4IuKSfrBUHIOAYV5tTceqLhHzM/MVYQbgdB04t89/1O/w1cDnyilFU="
 });
 
-console.log(bot);
-
 bot.on('message', function(event) {
-    console.log(event); /** print event */
-  });
-  
-  const app = express();
-  const linebotParser = bot.parser();
-  app.post('/', linebotParser);
-  
-  //因為 express 預設走 port 3000，而 heroku 上預設卻不是，要透過下列程式轉換
-  const server = app.listen(process.env.PORT || 8080, function() {
-    const port = server.address().port;
-    console.log("App now running on port", port);
-  });
+  if (event.message.type = 'text') {
+    var msg = event.message.text;
+    event.reply(msg).then(function(data) {
+      // success 
+      console.log(msg);
+    }).catch(function(error) {
+      // error 
+      console.log('error');
+    });
+  }
+});
+
+const app = express();
+const linebotParser = bot.parser();
+app.post('/', linebotParser);
+
+//因為 express 預設走 port 3000，而 heroku 上預設卻不是，要透過下列程式轉換
+const server = app.listen(process.env.PORT || 8080, function () {
+  const port = server.address().port;
+  console.log("App now running on port", port);
+});
 
