@@ -17,7 +17,7 @@ var bot = (0, _linebot2.default)({
 });
 
 bot.on('message', function (event) {
-  console.log(event); //把收到訊息的 event 印出來看看
+  console.log(event); /** print event */
 });
 
 var app = (0, _express2.default)();
