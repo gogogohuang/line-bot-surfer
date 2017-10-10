@@ -1,0 +1,30 @@
+{
+  "name": "line-bot-surfer",
+  "version": "1.0.0",
+  "description": "line bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel src --presets es2015,stage-0 --out-dir dist",
+    "start": "node ./dist/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dearparanoid/line-bot-surfer.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dearparanoid/line-bot-surfer/issues"
+  },
+  "homepage": "https://github.com/dearparanoid/line-bot-surfer#readme",
+  "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "express": "^4.16.2",
+    "linebot": "^1.3.0"
+  },
+  "dependencies": {}
+}
