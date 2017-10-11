@@ -33,15 +33,16 @@ bot.on('message', function (event) {
 
     var fetcher = _weatherTaiwan2.default.fetch('CWB-27A80F1A-A586-4FDC-BE8A-641BF50848FA');
     var parser = _weatherTaiwan2.default.parse();
+
     fetcher.pipe(parser);
 
     parser.on('data', function (data) {
-      if (data.parameters.CITY.indexOf(msg) !== 0) {
+      //console.log(data);
+      if (data.locationName.indexOf(msg) !== 0) {
         replyText = "現在" + msg + "溫度是" + data.elements.TEMP + " 度";
       } else {
         replyText = "找不到";
       }
-
       event.reply(replyText).then(function (data) {}).catch(function (error) {
         // error 
         console.log('error');
