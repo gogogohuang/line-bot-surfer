@@ -13,7 +13,6 @@ const bot = linebot({
 bot.on('message', function (event) {
   if (event.message.type = 'text') {
     const msg = event.message.text;
-    let replyText;
 
     const fetcher = weatherTW.fetch('CWB-27A80F1A-A586-4FDC-BE8A-641BF50848FA');
     const parser = weatherTW.parse();
@@ -22,19 +21,17 @@ bot.on('message', function (event) {
 
     parser.on('data', function (data) {
       //console.log(data);
-      if (data.locationName.indexOf(msg) !== 0) {
-        replyText = "現在" + msg + "溫度是" + data.elements.TEMP + " 度";
-      } else {
-        replyText = "找不到";
+      // console.log(data.locationName.search(msg));   
+      if (encodeURIComponent(data.locationName).search(encodeURIComponent(msg)) === 0) {
+        const replyText = "現在" + msg + "溫度是" + data.elements.TEMP + " 度";
+        // console.log(replyText);
+        event.reply(replyText).then(function (data) {
+        }).catch(function (error) {
+          // error 
+          console.log('error');
+        });
       }
-      event.reply(replyText).then(function (data) {
-      }).catch(function (error) {
-        // error 
-        console.log('error');
-      });
     });
-
-
   }
 });
 

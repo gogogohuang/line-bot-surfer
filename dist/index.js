@@ -29,7 +29,6 @@ var bot = (0, _linebot2.default)({
 bot.on('message', function (event) {
   if (event.message.type = 'text') {
     var msg = event.message.text;
-    var replyText = void 0;
 
     var fetcher = _weatherTaiwan2.default.fetch('CWB-27A80F1A-A586-4FDC-BE8A-641BF50848FA');
     var parser = _weatherTaiwan2.default.parse();
@@ -38,15 +37,15 @@ bot.on('message', function (event) {
 
     parser.on('data', function (data) {
       //console.log(data);
-      if (data.locationName.indexOf(msg) !== 0) {
-        replyText = "現在" + msg + "溫度是" + data.elements.TEMP + " 度";
-      } else {
-        replyText = "找不到";
+      // console.log(data.locationName.search(msg));   
+      if (encodeURIComponent(data.locationName).search(encodeURIComponent(msg)) === 0) {
+        var replyText = "現在" + msg + "溫度是" + data.elements.TEMP + " 度";
+        // console.log(replyText);
+        event.reply(replyText).then(function (data) {}).catch(function (error) {
+          // error 
+          console.log('error');
+        });
       }
-      event.reply(replyText).then(function (data) {}).catch(function (error) {
-        // error 
-        console.log('error');
-      });
     });
   }
 });
