@@ -38,7 +38,10 @@ bot.on('message', function (event) {
   if (event.message.type = 'text') {
     var cityName = event.message.text;
 
-    var distrct = Object.values(gAllCity).filter(function (city) {
+    //const distrct = Object.values(gAllCity).filter((city) => {
+    var distrct = Object.keys(gAllCity).map(function (ele) {
+      return gAllCity[ele];
+    }).filter(function (city) {
       return city.towns.filter(function (town) {
         return town.name.match(cityName) !== null;
       }).length !== 0;

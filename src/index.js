@@ -17,7 +17,9 @@ bot.on('message', function (event) {
   if (event.message.type = 'text') {
     const cityName = event.message.text;
 
-    const distrct = Object.values(gAllCity).filter((city) => {
+    //const distrct = Object.values(gAllCity).filter((city) => {
+    const distrct = Object.keys(gAllCity).map((ele)=>gAllCity[ele])
+    .filter((city) => {
       return (city.towns.filter(town => town.name.match(cityName) !== null).length !== 0);
     }).find((province) => {
       return (province.towns.filter((town) => {
