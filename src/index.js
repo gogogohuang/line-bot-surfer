@@ -15,6 +15,8 @@ const gAllCity = goWeather.getAllCity().then((data) => { Object.assign(gAllCity,
 
 bot.on('message', function (event) {
   if (event.message.type = 'text') {
+    goWeather.getSeaData();  
+    
     const cityName = event.message.text;
 
     //const distrct = Object.values(gAllCity).filter((city) => {
@@ -25,8 +27,7 @@ bot.on('message', function (event) {
       return (province.towns.filter((town) => {
         return (town.name.match(cityName) !== null);
       }));
-    }).towns.
-      filter((town) => { return (town.name.match(cityName) !== null) });
+    }).towns.filter((town) => { return (town.name.match(cityName) !== null) });
 
     const distrctWeather = goWeather.getWeatherById(distrct[0].id)
       .then((data) => {

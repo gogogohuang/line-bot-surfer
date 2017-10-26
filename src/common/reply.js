@@ -1,1 +1,0 @@
-export const wushi = "烏石";
