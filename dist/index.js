@@ -20,6 +20,10 @@ var _weather = require('./weather');
 
 var goWeather = _interopRequireWildcard(_weather);
 
+var _Common = require('./common/Common');
+
+var status = _interopRequireWildcard(_Common);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -34,45 +38,89 @@ var gAllCity = goWeather.getAllCity().then(function (data) {
   Object.assign(gAllCity, data);
 });
 
+var gGoWeatherStatus = status.statusInit;
+
 bot.on('message', function (event) {
   if (event.message.type = 'text') {
-    //goWeather.getSeaData();  
-
-    var cityName = event.message.text;
-
-    //const distrct = Object.values(gAllCity).filter((city) => {
-    try {
-      var distrct = Object.keys(gAllCity).map(function (ele) {
-        return gAllCity[ele];
-      }).filter(function (city) {
-        return city.towns.filter(function (town) {
-          return town.name.match(cityName) !== null;
-        }).length !== 0;
-      }).find(function (province) {
-        return province.towns.filter(function (town) {
-          return town.name.match(cityName) !== null;
-        });
-      }).towns.filter(function (town) {
-        return town.name.match(cityName) !== null;
-      });
-      var distrctWeather = goWeather.getWeatherById(distrct[0].id).then(function (data) {
-        Object.assign(distrctWeather, data);
-      });
-      setTimeout(function () {
-        var replyText = distrctWeather.specials.length === 0 ? '\u73FE\u5728\u5929\u6C23' + distrctWeather.desc + ', \u6C23\u6EAB\u662F' + distrctWeather.temperature + '\u5EA6' : '\u73FE\u5728\u5929\u6C23' + distrctWeather.desc + ', \u6C23\u6EAB\u662F' + distrctWeather.temperature + '\u5EA6, \u6700\u8FD1\u6709' + distrctWeather.specials[0].title + ':' + distrctWeather.specials[0].desc;
-
-        event.reply(replyText).then(function (data) {}).catch(function (error) {
+    var replyText = "想問什麼";
+    switch (gGoWeatherStatus) {
+      case status.statusInit:
+        event.reply("你可以問我關於天氣, 海洋").then(function (data) {}).catch(function (error) {
           console.log('error');
         });
-      }, 1000);
-    } catch (e) {
-      var replyText = "沒這個地方";
-      event.reply(replyText).then(function (data) {}).catch(function (error) {
-        console.log('error');
-      });
+        gGoWeatherStatus = status.statusStart;
+        break;
+
+      case status.statusStart:
+        var text = event.message.text;
+        var _replyText = "我找不到相關資料";
+        switch (text) {
+          case "天氣":
+            gGoWeatherStatus = status.statusWeather;
+            _replyText = "你想問哪個城市?";
+            break;
+          case "海洋":
+            gGoWeatherStatus = status.statusOcean;
+            _replyText = "你想問哪個城市?";
+            break;
+          default:
+            gGoWeatherStatus = status.statusInit;
+            break;
+        }
+        event.reply(_replyText).then(function (data) {}).catch(function (error) {
+          console.log('error');
+        });
+        break;
+      case status.statusWeather:
+        gGoWeatherStatus = status.statusInit;
+        getWeather(event);
+        break;
+      case status.statusOcean:
+        gGoWeatherStatus = status.statusInit;
+        goWeather.getSeaData();
+        break;
+      case status.statusEnd:
+      default:
+        gGoWeatherStatus = status.statusStart;
+        break;
     }
   }
 });
+
+function getWeather(event) {
+  var cityName = event.message.text;
+
+  try {
+    var distrct = Object.keys(gAllCity).map(function (ele) {
+      return gAllCity[ele];
+    }).filter(function (city) {
+      return city.towns.filter(function (town) {
+        return town.name.match(cityName) !== null;
+      }).length !== 0;
+    }).find(function (province) {
+      return province.towns.filter(function (town) {
+        return town.name.match(cityName) !== null;
+      });
+    }).towns.filter(function (town) {
+      return town.name.match(cityName) !== null;
+    });
+    goWeather.getWeatherById(distrct[0].id).then(function (data) {
+      var reply = data.specials.length === 0 ? '\u73FE\u5728\u5929\u6C23' + data.desc + ', \u6C23\u6EAB\u662F' + data.temperature + '\u5EA6' : '\u73FE\u5728\u5929\u6C23' + data.desc + ', \u6C23\u6EAB\u662F' + data.temperature + '\u5EA6, \u6700\u8FD1\u6709' + data.specials[0].title + ':' + data.specials[0].desc;
+      return reply;
+    }).then(function (reply) {
+      var replyText = reply;
+      event.reply(replyText).then(function (data) {}).catch(function (error) {
+        console.log('error');
+      });
+    });
+  } catch (e) {
+    var replyText = "沒這個地方, 供三小啦!";
+    event.reply(replyText).then(function (data) {}).catch(function (error) {
+      console.log('error');
+    });
+  }
+  return 0;
+}
 
 var app = (0, _express2.default)();
 var linebotParser = bot.parser();
