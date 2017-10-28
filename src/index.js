@@ -15,35 +15,46 @@ const gAllCity = goWeather.getAllCity().then((data) => { Object.assign(gAllCity,
 
 bot.on('message', function (event) {
   if (event.message.type = 'text') {
+    //goWeather.getSeaData();  
+
     const cityName = event.message.text;
 
     //const distrct = Object.values(gAllCity).filter((city) => {
-    const distrct = Object.keys(gAllCity).map((ele)=>gAllCity[ele])
-    .filter((city) => {
-      return (city.towns.filter(town => town.name.match(cityName) !== null).length !== 0);
-    }).find((province) => {
-      return (province.towns.filter((town) => {
-        return (town.name.match(cityName) !== null);
-      }));
-    }).towns.
-      filter((town) => { return (town.name.match(cityName) !== null) });
+    try {
+      const distrct = Object.keys(gAllCity).map((ele) => gAllCity[ele])
+        .filter((city) => {
+          return (city.towns.filter(town => town.name.match(cityName) !== null).length !== 0);
+        }).find((province) => {
+          return (province.towns.filter((town) => {
+            return (town.name.match(cityName) !== null);
+          }));
+        }).towns.filter((town) => { return (town.name.match(cityName) !== null) });
+      const distrctWeather = goWeather.getWeatherById(distrct[0].id)
+        .then((data) => {
+          Object.assign(distrctWeather, data);
+        });
+      setTimeout(function () {
+        const replyText = distrctWeather.specials.length === 0 ?
+          `現在天氣${distrctWeather.desc}, 氣溫是${distrctWeather.temperature}度` :
+          `現在天氣${distrctWeather.desc}, 氣溫是${distrctWeather.temperature}度, 最近有${distrctWeather.specials[0].title}:${distrctWeather.specials[0].desc}`
+          ;
 
-    const distrctWeather = goWeather.getWeatherById(distrct[0].id)
-      .then((data) => {
-          Object.assign(distrctWeather, data); 
-      });
-      setTimeout(function() {
-        const replyText = distrctWeather.specials.length === 0? 
-        `現在天氣${distrctWeather.desc}, 氣溫是${distrctWeather.temperature}度`:
-        `現在天氣${distrctWeather.desc}, 氣溫是${distrctWeather.temperature}度, 最近有${distrctWeather.specials[0].title}:${distrctWeather.specials[0].desc}`
-        ;
-        
         event.reply(replyText).then(function (data) {
-          
+
         }).catch(function (error) {
           console.log('error');
         });
       }, 1000);
+    }
+    catch(e){
+      const replyText = "沒這個地方";
+      event.reply(replyText).then(function (data) {
+
+      }).catch(function (error) {
+        console.log('error');
+      });
+    }
+
   }
 });
 

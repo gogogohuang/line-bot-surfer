@@ -39,30 +39,36 @@ bot.on('message', function (event) {
     var cityName = event.message.text;
 
     //const distrct = Object.values(gAllCity).filter((city) => {
-    var distrct = Object.keys(gAllCity).map(function (ele) {
-      return gAllCity[ele];
-    }).filter(function (city) {
-      return city.towns.filter(function (town) {
-        return town.name.match(cityName) !== null;
-      }).length !== 0;
-    }).find(function (province) {
-      return province.towns.filter(function (town) {
+    try {
+      var distrct = Object.keys(gAllCity).map(function (ele) {
+        return gAllCity[ele];
+      }).filter(function (city) {
+        return city.towns.filter(function (town) {
+          return town.name.match(cityName) !== null;
+        }).length !== 0;
+      }).find(function (province) {
+        return province.towns.filter(function (town) {
+          return town.name.match(cityName) !== null;
+        });
+      }).towns.filter(function (town) {
         return town.name.match(cityName) !== null;
       });
-    }).towns.filter(function (town) {
-      return town.name.match(cityName) !== null;
-    });
+      var distrctWeather = goWeather.getWeatherById(distrct[0].id).then(function (data) {
+        Object.assign(distrctWeather, data);
+      });
+      setTimeout(function () {
+        var replyText = distrctWeather.specials.length === 0 ? '\u73FE\u5728\u5929\u6C23' + distrctWeather.desc + ', \u6C23\u6EAB\u662F' + distrctWeather.temperature + '\u5EA6' : '\u73FE\u5728\u5929\u6C23' + distrctWeather.desc + ', \u6C23\u6EAB\u662F' + distrctWeather.temperature + '\u5EA6, \u6700\u8FD1\u6709' + distrctWeather.specials[0].title + ':' + distrctWeather.specials[0].desc;
 
-    var distrctWeather = goWeather.getWeatherById(distrct[0].id).then(function (data) {
-      Object.assign(distrctWeather, data);
-    });
-    setTimeout(function () {
-      var replyText = distrctWeather.specials.length === 0 ? '\u73FE\u5728\u5929\u6C23' + distrctWeather.desc + ', \u6C23\u6EAB\u662F' + distrctWeather.temperature + '\u5EA6' : '\u73FE\u5728\u5929\u6C23' + distrctWeather.desc + ', \u6C23\u6EAB\u662F' + distrctWeather.temperature + '\u5EA6, \u6700\u8FD1\u6709' + distrctWeather.specials[0].title + ':' + distrctWeather.specials[0].desc;
-
+        event.reply(replyText).then(function (data) {}).catch(function (error) {
+          console.log('error');
+        });
+      }, 1000);
+    } catch (e) {
+      var replyText = "沒這個地方";
       event.reply(replyText).then(function (data) {}).catch(function (error) {
         console.log('error');
       });
-    }, 1000);
+    }
   }
 });
 
