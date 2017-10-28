@@ -45,9 +45,7 @@ bot.on('message', function (event) {
     var replyText = "想問什麼";
     switch (gGoWeatherStatus) {
       case status.statusInit:
-        event.reply("你可以問我關於天氣, 海洋").then(function (data) {}).catch(function (error) {
-          console.log('error');
-        });
+        lineReply(event, "你可以問我關於天氣, 海洋");
         gGoWeatherStatus = status.statusStart;
         break;
 
@@ -59,26 +57,31 @@ bot.on('message', function (event) {
             gGoWeatherStatus = status.statusWeather;
             _replyText = "你想問哪個城市?";
             break;
+
           case "海洋":
             gGoWeatherStatus = status.statusOcean;
             _replyText = "你想問哪個城市?";
             break;
+
           default:
             gGoWeatherStatus = status.statusInit;
+            _replyText = "想死嗎?";
             break;
         }
-        event.reply(_replyText).then(function (data) {}).catch(function (error) {
-          console.log('error');
-        });
+        lineReply(event, _replyText);
         break;
+
       case status.statusWeather:
         gGoWeatherStatus = status.statusInit;
         getWeather(event);
         break;
+
       case status.statusOcean:
         gGoWeatherStatus = status.statusInit;
-        goWeather.getSeaData();
+        lineReply(event, "我還沒做好, 你急屁");
+        //goWeather.getSeaData();
         break;
+
       case status.statusEnd:
       default:
         gGoWeatherStatus = status.statusStart;
@@ -120,6 +123,12 @@ function getWeather(event) {
     });
   }
   return 0;
+}
+
+function lineReply(event, text) {
+  event.reply(text).then(function (data) {}).catch(function (error) {
+    console.log('error');
+  });
 }
 
 var app = (0, _express2.default)();
