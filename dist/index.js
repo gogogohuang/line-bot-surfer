@@ -36,8 +36,6 @@ var gAllCity = goWeather.getAllCity().then(function (data) {
 
 bot.on('message', function (event) {
   if (event.message.type = 'text') {
-    goWeather.getSeaData();
-
     var cityName = event.message.text;
 
     //const distrct = Object.values(gAllCity).filter((city) => {

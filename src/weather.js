@@ -1,8 +1,4 @@
 import fetch from 'node-fetch';
-import * as data from './common/V';
-import * as Parser from './common/Parser';
-import saxStream from 'sax-stream';
-import hyperquest from 'hyperquest';
 
 export const getAllCity = () => {
     return (fetch(
@@ -45,16 +41,4 @@ export const getWeatherById = (id) => {
             .catch((err) => {
                 console.log(err);
             }));
-}
-
-export const getSeaData = () => {
-    hyperquest(`http://opendata.cwb.gov.tw/opendataapi?dataid=${data.seaData}&authorizationkey=${data.apiKey}`)
-    .pipe(saxStream({
-      strict: true,
-      tag: 'location'
-    })
-    .on('data', function(item) {    
-        console.log(Parser.oceanDataParser(item));
-      //console.log(item);
-    }));
 }
