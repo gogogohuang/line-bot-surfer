@@ -83,3 +83,15 @@ export const weatherNowData = (weather, location) => {
     const reply = newData.reduce((pre, cur) => { return pre + cur }, `${location}: `);
     return reply;
 }
+
+export const getPredictionData = () => {
+    hyperquest(`http://opendata.cwb.gov.tw/opendataapi?dataid=${data.preData}&authorizationkey=${data.apiKey}`)
+        .pipe(saxStream({
+            strict: true,
+            //tag: 'location'
+        })
+            .on('data', function (item) {
+                console.log(item);
+                //console.log(item);
+            }));
+}
