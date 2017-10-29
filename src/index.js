@@ -4,8 +4,10 @@ import weatherTW from 'weather-taiwan';
 import fetch from 'node-fetch';
 
 import * as goWeather from './weather';
-import * as status from './common/Common';
+import * as status from './common/Status';
 import { Client } from './common/Client';
+
+import { LocMapping } from './common/V';
 
 const bot = linebot({
   channelId: "1539958657",
@@ -24,9 +26,8 @@ bot.on('message', (event) => {
     if (!gClients.find((client) => (client.user === profile.userId))) {
       let newClient = new Client(profile.userId, status.statusInit);
       gClients.push(newClient);
-    } else {
-      getReply(gClients.find((client) => (client.user === profile.userId)), event);
     }
+    getReply(gClients.find((client) => (client.user === profile.userId)), event);
   }).catch((e) => { console.log(e) });
 });
 
@@ -35,7 +36,7 @@ const getReply = (client, event) => {
     let replyText = "想問什麼";
     switch (client.status) {
       case status.statusInit:
-        lineReply(event, "你可以問我關於天氣, 海洋");
+        lineReply(event, "你可以問我關於天氣, 海洋, 預報");
         client.status = status.statusStart;
         break;
 
@@ -50,6 +51,11 @@ const getReply = (client, event) => {
 
           case "海洋":
             client.status = status.statusOcean;
+            replyText = "你想問哪個城市?";
+            break;
+
+          case "預報":
+            client.status = status.statusPre2Day;
             replyText = "你想問哪個城市?";
             break;
 
@@ -70,6 +76,11 @@ const getReply = (client, event) => {
         client.status = status.statusInit;
         lineReply(event, "我還沒做好, 你急屁");
         //goWeather.getSeaData();
+        break;
+
+      case status.statusPre2Day:
+        client.status = status.statusInit;
+        getPre2DaysWeather(event);
         break;
 
       case status.statusEnd:
@@ -101,6 +112,32 @@ function getWeather(event) {
         const replyText = reply;
         event.reply(replyText).then(function (data) {
 
+        }).catch(function (error) {
+          console.log('error');
+        });
+      });
+  }
+  catch (e) {
+    const replyText = "沒這個地方, 供三小啦!";
+    event.reply(replyText).then(function (data) {
+    }).catch(function (error) {
+      console.log('error');
+    });
+  }
+  return 0;
+}
+
+function getPre2DaysWeather(event) {
+  const cityName = event.message.text;
+  try {
+    const City = LocMapping.find((Taiwan) => (Taiwan.City.find(city => city.match(cityName))));
+    const pre2DaysData = goWeather.getPredictionCityData(City.Index, cityName)
+      .then((data) => {
+        return goWeather.weatherPreData(data);
+      })
+      .then((reply) => {
+        const replyText = reply;
+        event.reply(replyText).then(function (data) {
         }).catch(function (error) {
           console.log('error');
         });

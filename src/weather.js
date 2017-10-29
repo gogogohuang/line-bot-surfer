@@ -52,12 +52,12 @@ export const getSeaData = () => {
         .pipe(saxStream({
             strict: true,
             tag: 'location'
-        })
-            .on('data', function (item) {
-                console.log(Parser.oceanDataParser(item));
-                //console.log(item);
-            }));
+        }).on('data', function (item) {
+            console.log(Parser.oceanDataParser(item));
+            //console.log(item);
+        }));
 }
+
 
 export const weatherNowData = (weather, location) => {
     if (!weather) {
@@ -84,14 +84,53 @@ export const weatherNowData = (weather, location) => {
     return reply;
 }
 
-export const getPredictionData = () => {
-    hyperquest(`http://opendata.cwb.gov.tw/opendataapi?dataid=${data.preData}&authorizationkey=${data.apiKey}`)
-        .pipe(saxStream({
-            strict: true,
-            //tag: 'location'
-        })
-            .on('data', function (item) {
-                console.log(item);
-                //console.log(item);
+/** 
+http://opendata.cwb.gov.tw/api/v1/rest/datastore/{dataid}?
+locationId={locationId}
+&locationName={locationName}
+&elementName={elementName}
+&sort={sort}
+&startTime={startTime}
+&dataTime={dataTime}
+&timeFrom={timeFrom}
+&timeTo={timeTo} 
+*/
+
+export const weatherPreData = (loc) =>{
+    console.log(loc);
+    let newData = new Array();
+    loc.forEach((info)=>{
+        newData.push(info.locationName);
+        //newData.push(info.weatherElement[0].time[0].elementValue);
+        //newData.push(info.weatherElement[0].time[1].elementValue);
+    });
+   // const reply = newData.reduce((pre, cur) => { return pre + cur }, `${locationName}: `);
+    //console.log(reply);
+    return reply;
+}
+
+export const getPredictionCityData = (cityID, cityName) => {
+    console.log(`http://opendata.cwb.gov.tw/api/v1/rest/datastore/${data.predictionCityData}
+                ?locationId=${cityID}&sort=time&elementName=WeatherDescription
+                &Authorization=${data.apiKey}`);
+        
+    return (
+        fetch(
+            `http://opendata.cwb.gov.tw/api/v1/rest/datastore/${data.predictionCityData}?locationId=${cityID}&sort=time&elementName=WeatherDescription&Authorization=${data.apiKey}`, {
+                method: 'GET',
+                mode: 'cors',
+            })
+            .then((res) => {
+                if (res.ok) {
+                    return res.json();
+                } else {
+                    throw new Error('Server response wasn\'t OK');
+                }
+            })
+            .then((data) => {
+                return data.records.locations[0].location;
+            })
+            .catch((err) => {
+                console.log(err);
             }));
 }

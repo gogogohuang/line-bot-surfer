@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.getPredictionData = exports.weatherNowData = exports.getSeaData = exports.getWeatherById = exports.getAllCity = undefined;
+exports.getPredictionCityData = exports.weatherPreData = exports.weatherNowData = exports.getSeaData = exports.getWeatherById = exports.getAllCity = undefined;
 
 var _nodeFetch = require('node-fetch');
 
@@ -94,12 +94,46 @@ var weatherNowData = exports.weatherNowData = function weatherNowData(weather, l
     return reply;
 };
 
-var getPredictionData = exports.getPredictionData = function getPredictionData() {
-    (0, _hyperquest2.default)('http://opendata.cwb.gov.tw/opendataapi?dataid=' + data.preData + '&authorizationkey=' + data.apiKey).pipe((0, _saxStream2.default)({
-        strict: true
-        //tag: 'location'
-    }).on('data', function (item) {
-        console.log(item);
-        //console.log(item);
-    }));
+/** 
+http://opendata.cwb.gov.tw/api/v1/rest/datastore/{dataid}?
+locationId={locationId}
+&locationName={locationName}
+&elementName={elementName}
+&sort={sort}
+&startTime={startTime}
+&dataTime={dataTime}
+&timeFrom={timeFrom}
+&timeTo={timeTo} 
+*/
+
+var weatherPreData = exports.weatherPreData = function weatherPreData(loc) {
+    console.log(loc);
+    var newData = new Array();
+    loc.forEach(function (info) {
+        newData.push(info.locationName);
+        //newData.push(info.weatherElement[0].time[0].elementValue);
+        //newData.push(info.weatherElement[0].time[1].elementValue);
+    });
+    // const reply = newData.reduce((pre, cur) => { return pre + cur }, `${locationName}: `);
+    //console.log(reply);
+    return reply;
+};
+
+var getPredictionCityData = exports.getPredictionCityData = function getPredictionCityData(cityID, cityName) {
+    console.log('http://opendata.cwb.gov.tw/api/v1/rest/datastore/' + data.predictionCityData + '\n                ?locationId=' + cityID + '&sort=time&elementName=WeatherDescription\n                &Authorization=' + data.apiKey);
+
+    return (0, _nodeFetch2.default)('http://opendata.cwb.gov.tw/api/v1/rest/datastore/' + data.predictionCityData + '?locationId=' + cityID + '&sort=time&elementName=WeatherDescription&Authorization=' + data.apiKey, {
+        method: 'GET',
+        mode: 'cors'
+    }).then(function (res) {
+        if (res.ok) {
+            return res.json();
+        } else {
+            throw new Error('Server response wasn\'t OK');
+        }
+    }).then(function (data) {
+        return data.records.locations[0].location;
+    }).catch(function (err) {
+        console.log(err);
+    });
 };

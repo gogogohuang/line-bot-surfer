@@ -20,11 +20,13 @@ var _weather = require('./weather');
 
 var goWeather = _interopRequireWildcard(_weather);
 
-var _Common = require('./common/Common');
+var _Status = require('./common/Status');
 
-var status = _interopRequireWildcard(_Common);
+var status = _interopRequireWildcard(_Status);
 
 var _Client = require('./common/Client');
+
+var _V = require('./common/V');
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -46,34 +48,26 @@ var gClients = new Array();
 bot.on('message', function (event) {
   /**Add client */
   event.source.profile().then(function (profile) {
-    console.log(gClients);
-
     if (!gClients.find(function (client) {
       return client.user === profile.userId;
     })) {
       var newClient = new _Client.Client(profile.userId, status.statusInit);
       gClients.push(newClient);
-      //console.log(gClients);
-      //findClient = gClients.find((client) => (client.user === profile.userId));
-      //console.log(findClient);
-      // console.log(profile);
-    } else {
-      getReply(gClients.find(function (client) {
-        return client.user === profile.userId;
-      }), event);
     }
+    getReply(gClients.find(function (client) {
+      return client.user === profile.userId;
+    }), event);
   }).catch(function (e) {
     console.log(e);
   });
 });
 
 var getReply = function getReply(client, event) {
-  console.log('getReply');
   if (event.message.type = 'text') {
     var replyText = "想問什麼";
     switch (client.status) {
       case status.statusInit:
-        lineReply(event, "你可以問我關於天氣, 海洋");
+        lineReply(event, "你可以問我關於天氣, 海洋, 預報");
         client.status = status.statusStart;
         break;
 
@@ -88,6 +82,11 @@ var getReply = function getReply(client, event) {
 
           case "海洋":
             client.status = status.statusOcean;
+            _replyText = "你想問哪個城市?";
+            break;
+
+          case "預報":
+            client.status = status.statusPre2Day;
             _replyText = "你想問哪個城市?";
             break;
 
@@ -108,6 +107,11 @@ var getReply = function getReply(client, event) {
         client.status = status.statusInit;
         lineReply(event, "我還沒做好, 你急屁");
         //goWeather.getSeaData();
+        break;
+
+      case status.statusPre2Day:
+        client.status = status.statusInit;
+        getPre2DaysWeather(event);
         break;
 
       case status.statusEnd:
@@ -137,6 +141,31 @@ function getWeather(event) {
     });
     goWeather.getWeatherById(distrct[0].id).then(function (data) {
       return goWeather.weatherNowData(data, cityName);
+    }).then(function (reply) {
+      var replyText = reply;
+      event.reply(replyText).then(function (data) {}).catch(function (error) {
+        console.log('error');
+      });
+    });
+  } catch (e) {
+    var replyText = "沒這個地方, 供三小啦!";
+    event.reply(replyText).then(function (data) {}).catch(function (error) {
+      console.log('error');
+    });
+  }
+  return 0;
+}
+
+function getPre2DaysWeather(event) {
+  var cityName = event.message.text;
+  try {
+    var City = _V.LocMapping.find(function (Taiwan) {
+      return Taiwan.City.find(function (city) {
+        return city.match(cityName);
+      });
+    });
+    var pre2DaysData = goWeather.getPredictionCityData(City.Index, cityName).then(function (data) {
+      return goWeather.weatherPreData(data);
     }).then(function (reply) {
       var replyText = reply;
       event.reply(replyText).then(function (data) {}).catch(function (error) {
