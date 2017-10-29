@@ -108,8 +108,7 @@ function getWeather(event) {
       return town.name.match(cityName) !== null;
     });
     goWeather.getWeatherById(distrct[0].id).then(function (data) {
-      var reply = data.specials.length === 0 ? '\u73FE\u5728\u5929\u6C23' + data.desc + ', \u6C23\u6EAB\u662F' + data.temperature + '\u5EA6' : '\u73FE\u5728\u5929\u6C23' + data.desc + ', \u6C23\u6EAB\u662F' + data.temperature + '\u5EA6, \u6700\u8FD1\u6709' + data.specials[0].title + ':' + data.specials[0].desc;
-      return reply;
+      return goWeather.weatherNowData(data, cityName);
     }).then(function (reply) {
       var replyText = reply;
       event.reply(replyText).then(function (data) {}).catch(function (error) {

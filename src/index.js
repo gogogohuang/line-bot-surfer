@@ -81,10 +81,7 @@ function getWeather(event) {
       }).towns.filter((town) => { return (town.name.match(cityName) !== null) });
     goWeather.getWeatherById(distrct[0].id)
       .then((data) => {
-        const reply = data.specials.length === 0 ?
-          `現在天氣${data.desc}, 氣溫是${data.temperature}度` :
-          `現在天氣${data.desc}, 氣溫是${data.temperature}度, 最近有${data.specials[0].title}:${data.specials[0].desc}`;
-        return (reply);
+        return (goWeather.weatherNowData(data, cityName));
       })
       .then((reply) => {
         const replyText = reply;
@@ -104,6 +101,8 @@ function getWeather(event) {
   }
   return 0;
 }
+
+
 
 function lineReply(event, text){
   event.reply(text).then(function (data) {

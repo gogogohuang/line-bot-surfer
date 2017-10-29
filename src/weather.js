@@ -49,12 +49,37 @@ export const getWeatherById = (id) => {
 
 export const getSeaData = () => {
     hyperquest(`http://opendata.cwb.gov.tw/opendataapi?dataid=${data.seaData}&authorizationkey=${data.apiKey}`)
-    .pipe(saxStream({
-      strict: true,
-      tag: 'location'
-    })
-    .on('data', function(item) {    
-        console.log(Parser.oceanDataParser(item));
-      //console.log(item);
-    }));
+        .pipe(saxStream({
+            strict: true,
+            tag: 'location'
+        })
+            .on('data', function (item) {
+                console.log(Parser.oceanDataParser(item));
+                //console.log(item);
+            }));
+}
+
+export const weatherNowData = (weather, location) => {
+    if (!weather) {
+        return "唉唷, 出錯了."
+    }
+
+    let newData = new Array();
+    newData.push(`現在天氣是${weather.desc} `);
+    newData.push(`氣溫是${weather.temperature}度 `);
+
+    weather.felt_air_temp < 20 ?
+        newData.push(`體感溫度是${weather.felt_air_temp}度, 有點涼意 `) :
+        newData.push(`體感溫度是${weather.felt_air_temp}度 `);
+
+    weather.rainfall === 0 ?
+        newData.push("今天不會下雨 ") :
+        newData.push(`降雨機率: ${weather.rainfall}% `);
+
+    weather.specials.length !== 0 ?
+        newData.push(`現在有事了, ${weather.specials[0].title}, ${weather.specials[0].desc} `) :
+        newData.push("這裡沒事兒 ");
+
+    const reply = newData.reduce((pre, cur) => { return pre + cur }, `${location}: `);
+    return reply;
 }

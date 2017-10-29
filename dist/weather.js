@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.getSeaData = exports.getWeatherById = exports.getAllCity = undefined;
+exports.weatherNowData = exports.getSeaData = exports.getWeatherById = exports.getAllCity = undefined;
 
 var _nodeFetch = require('node-fetch');
 
@@ -71,4 +71,25 @@ var getSeaData = exports.getSeaData = function getSeaData() {
         console.log(Parser.oceanDataParser(item));
         //console.log(item);
     }));
+};
+
+var weatherNowData = exports.weatherNowData = function weatherNowData(weather, location) {
+    if (!weather) {
+        return "唉唷, 出錯了.";
+    }
+
+    var newData = new Array();
+    newData.push('\u73FE\u5728\u5929\u6C23\u662F' + weather.desc + ' ');
+    newData.push('\u6C23\u6EAB\u662F' + weather.temperature + '\u5EA6 ');
+
+    weather.felt_air_temp < 20 ? newData.push('\u9AD4\u611F\u6EAB\u5EA6\u662F' + weather.felt_air_temp + '\u5EA6, \u6709\u9EDE\u6DBC\u610F ') : newData.push('\u9AD4\u611F\u6EAB\u5EA6\u662F' + weather.felt_air_temp + '\u5EA6 ');
+
+    weather.rainfall === 0 ? newData.push("今天不會下雨 ") : newData.push('\u964D\u96E8\u6A5F\u7387: ' + weather.rainfall + '% ');
+
+    weather.specials.length !== 0 ? newData.push('\u73FE\u5728\u6709\u4E8B\u4E86, ' + weather.specials[0].title + ', ' + weather.specials[0].desc + ' ') : newData.push("這裡沒事兒 ");
+
+    var reply = newData.reduce(function (pre, cur) {
+        return pre + cur;
+    }, location + ': ');
+    return reply;
 };
