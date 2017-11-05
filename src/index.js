@@ -5,7 +5,7 @@ import fetch from 'node-fetch';
 
 import * as goWeather from './weather';
 import * as status from './common/Common';
-
+import { Client } from './common/Client';
 
 const bot = linebot({
   channelId: "1539958657",
@@ -16,56 +16,70 @@ const bot = linebot({
 const gAllCity = goWeather.getAllCity().then((data) => { Object.assign(gAllCity, data) });
 
 let gGoWeatherStatus = status.statusInit;
+let gClients = new Array();
 
-bot.on('message', function (event) {
+bot.on('message', (event) => {
+  /**Add client */
+  event.source.profile().then((profile) => {
+    if (!gClients.find((client) => (client.user === profile.userId))) {
+      let newClient = new Client(profile.userId, status.statusInit);
+      gClients.push(newClient);
+    } else {
+      getReply(gClients.find((client) => (client.user === profile.userId)), event);
+    }
+  }).catch((e) => { console.log(e) });
+});
+
+const getReply = (client, event) => {
   if (event.message.type = 'text') {
     let replyText = "想問什麼";
-    switch (gGoWeatherStatus) {
+    switch (client.status) {
       case status.statusInit:
-      lineReply(event, "你可以問我關於天氣, 海洋");
-      gGoWeatherStatus = status.statusStart;
-      break;
+        lineReply(event, "你可以問我關於天氣, 海洋");
+        client.status = status.statusStart;
+        break;
 
       case status.statusStart:
         const text = event.message.text;
         let replyText = "我找不到相關資料";
         switch (text) {
           case "天氣":
-            gGoWeatherStatus = status.statusWeather;
+            client.status = status.statusWeather;
             replyText = "你想問哪個城市?";
             break;
 
           case "海洋":
-           gGoWeatherStatus = status.statusOcean;
-           replyText = "你想問哪個城市?";           
-           break;
+            client.status = status.statusOcean;
+            replyText = "你想問哪個城市?";
+            break;
 
           default:
-            gGoWeatherStatus = status.statusInit;
-            replyText= "想死嗎?";
+            client.status = status.statusInit;
+            replyText = "想死嗎?";
             break;
         }
         lineReply(event, replyText);
         break;
 
       case status.statusWeather:
-        gGoWeatherStatus = status.statusInit;      
+        client.status = status.statusInit;
         getWeather(event);
         break;
 
       case status.statusOcean:
-        gGoWeatherStatus = status.statusInit;
+        client.status = status.statusInit;
         lineReply(event, "我還沒做好, 你急屁");
         //goWeather.getSeaData();
         break;
 
       case status.statusEnd:
       default:
-        gGoWeatherStatus = status.statusStart;
+        client.status = status.statusStart;
         break;
     }
   }
-});
+};
+
 
 function getWeather(event) {
   const cityName = event.message.text;
@@ -102,9 +116,7 @@ function getWeather(event) {
   return 0;
 }
 
-
-
-function lineReply(event, text){
+function lineReply(event, text) {
   event.reply(text).then(function (data) {
   }).catch(function (error) {
     console.log('error');
@@ -119,4 +131,3 @@ const server = app.listen(process.env.PORT || 8080, function () {
   const port = server.address().port;
   console.log("App now running on port", port);
 });
-

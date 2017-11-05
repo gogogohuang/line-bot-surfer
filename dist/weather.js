@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.weatherNowData = exports.getSeaData = exports.getWeatherById = exports.getAllCity = undefined;
+exports.getPredictionData = exports.weatherNowData = exports.getSeaData = exports.getWeatherById = exports.getAllCity = undefined;
 
 var _nodeFetch = require('node-fetch');
 
@@ -92,4 +92,14 @@ var weatherNowData = exports.weatherNowData = function weatherNowData(weather, l
         return pre + cur;
     }, location + ': ');
     return reply;
+};
+
+var getPredictionData = exports.getPredictionData = function getPredictionData() {
+    (0, _hyperquest2.default)('http://opendata.cwb.gov.tw/opendataapi?dataid=' + data.preData + '&authorizationkey=' + data.apiKey).pipe((0, _saxStream2.default)({
+        strict: true
+        //tag: 'location'
+    }).on('data', function (item) {
+        console.log(item);
+        //console.log(item);
+    }));
 };
