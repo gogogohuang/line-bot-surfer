@@ -96,6 +96,8 @@ locationId={locationId}
 &timeTo={timeTo} 
 */
 
+/**test */
+
 export const weatherPreData = (loc) =>{
     console.log(loc);
     let newData = new Array();
