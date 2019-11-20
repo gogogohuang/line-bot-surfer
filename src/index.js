@@ -1,7 +1,5 @@
 import linebot from 'linebot';
 import express from 'express';
-import weatherTW from 'weather-taiwan';
-import fetch from 'node-fetch';
 
 import * as goWeather from './weather';
 import * as status from './common/Common';
@@ -81,7 +79,7 @@ const getReply = (client, event) => {
 };
 
 
-function getWeather(event) {
+const getWeather = (event) => {
   const cityName = event.message.text;
 
   try {
@@ -116,7 +114,7 @@ function getWeather(event) {
   return 0;
 }
 
-function lineReply(event, text) {
+const lineReply = (event, text) => {
   event.reply(text).then(function (data) {
   }).catch(function (error) {
     console.log('error');
