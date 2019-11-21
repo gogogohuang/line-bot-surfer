@@ -8,14 +8,6 @@ var _express = require('express');
 
 var _express2 = _interopRequireDefault(_express);
 
-var _weatherTaiwan = require('weather-taiwan');
-
-var _weatherTaiwan2 = _interopRequireDefault(_weatherTaiwan);
-
-var _nodeFetch = require('node-fetch');
-
-var _nodeFetch2 = _interopRequireDefault(_nodeFetch);
-
 var _weather = require('./weather');
 
 var goWeather = _interopRequireWildcard(_weather);
@@ -40,23 +32,17 @@ var gAllCity = goWeather.getAllCity().then(function (data) {
   Object.assign(gAllCity, data);
 });
 
-var gGoWeatherStatus = status.statusInit;
+var gGoWeatherStatus = status.STATUS_INIT;
 var gClients = new Array();
 
 bot.on('message', function (event) {
   /**Add client */
   event.source.profile().then(function (profile) {
-    console.log(gClients);
-
     if (!gClients.find(function (client) {
       return client.user === profile.userId;
     })) {
-      var newClient = new _Client.Client(profile.userId, status.statusInit);
+      var newClient = new _Client.Client(profile.userId, status.STATUS_INIT);
       gClients.push(newClient);
-      //console.log(gClients);
-      //findClient = gClients.find((client) => (client.user === profile.userId));
-      //console.log(findClient);
-      // console.log(profile);
     } else {
       getReply(gClients.find(function (client) {
         return client.user === profile.userId;
@@ -68,57 +54,56 @@ bot.on('message', function (event) {
 });
 
 var getReply = function getReply(client, event) {
-  console.log('getReply');
   if (event.message.type = 'text') {
     var replyText = "想問什麼";
     switch (client.status) {
-      case status.statusInit:
+      case status.STATUS_INIT:
         lineReply(event, "你可以問我關於天氣, 海洋");
-        client.status = status.statusStart;
+        client.status = status.STATUS_START;
         break;
 
-      case status.statusStart:
+      case status.STATUS_START:
         var text = event.message.text;
         var _replyText = "我找不到相關資料";
         switch (text) {
           case "天氣":
-            client.status = status.statusWeather;
+            client.status = status.STATUS_WEATHER;
             _replyText = "你想問哪個城市?";
             break;
 
           case "海洋":
-            client.status = status.statusOcean;
+            client.status = status.STATUS_OCEAN;
             _replyText = "你想問哪個城市?";
             break;
 
           default:
-            client.status = status.statusInit;
+            client.status = status.STATUS_INIT;
             _replyText = "想死嗎?";
             break;
         }
         lineReply(event, _replyText);
         break;
 
-      case status.statusWeather:
-        client.status = status.statusInit;
+      case status.STATUS_WEATHER:
+        client.status = status.STATUS_INIT;
         getWeather(event);
         break;
 
-      case status.statusOcean:
-        client.status = status.statusInit;
+      case status.STATUS_OCEAN:
+        client.status = status.STATUS_INIT;
         lineReply(event, "我還沒做好, 你急屁");
         //goWeather.getSeaData();
         break;
 
-      case status.statusEnd:
+      case status.STATUS_END:
       default:
-        client.status = status.statusStart;
+        client.status = status.STATUS_START;
         break;
     }
   }
 };
 
-function getWeather(event) {
+var getWeather = function getWeather(event) {
   var cityName = event.message.text;
 
   try {
@@ -150,13 +135,13 @@ function getWeather(event) {
     });
   }
   return 0;
-}
+};
 
-function lineReply(event, text) {
+var lineReply = function lineReply(event, text) {
   event.reply(text).then(function (data) {}).catch(function (error) {
     console.log('error');
   });
-}
+};
 
 var app = (0, _express2.default)();
 var linebotParser = bot.parser();

@@ -1,11 +1,23 @@
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.oceanDataParser = undefined;
+
+var _idx = require('idx');
+
+var _idx2 = _interopRequireDefault(_idx);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var oceanDataParser = exports.oceanDataParser = function oceanDataParser(data) {
     var elements = {};
-    data.children.time.children.weatherElement.forEach(function (element) {
+    var weatherElement = (0, _idx2.default)(data, function (_) {
+        return _.weatherElement;
+    });
+
+    weatherElement.forEach(function (element) {
         elements[element.children.elementName.value] = parseFloat(element.children.elementValue.children.value.value) + element.children.elementValue.children.measures.value;
     });
 
