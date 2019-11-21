@@ -1,7 +1,7 @@
-export const statusInit = "init";
-export const statusStart = "start";
-export const statusWeatherStart = "weatherStart";
-export const statusOceanStart = "OceanStart";
-export const statusEnd = "end";
-export const statusWeather = "weather";
-export const statusOcean = "ocean";
+export const STATUS_INIT = "STATUS_INIT";
+export const STATUS_START = "STATUS_START";
+export const STATUS_WAETHER_START = "STATUS_WAETHER_START";
+export const STATUS_OCEAN_START = "STATUS_OCEAN_START";
+export const STATUS_END = "STATUS_END";
+export const STATUS_WEATHER = "STATUS_WEATHER";
+export const STATUS_OCEAN = "STATUS_OCEAN";

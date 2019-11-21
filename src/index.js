@@ -13,14 +13,14 @@ const bot = linebot({
 
 const gAllCity = goWeather.getAllCity().then((data) => { Object.assign(gAllCity, data) });
 
-let gGoWeatherStatus = status.statusInit;
+let gGoWeatherStatus = status.STATUS_INIT;
 let gClients = new Array();
 
 bot.on('message', (event) => {
   /**Add client */
   event.source.profile().then((profile) => {
     if (!gClients.find((client) => (client.user === profile.userId))) {
-      let newClient = new Client(profile.userId, status.statusInit);
+      let newClient = new Client(profile.userId, status.STATUS_INIT);
       gClients.push(newClient);
     } else {
       getReply(gClients.find((client) => (client.user === profile.userId)), event);
@@ -32,47 +32,47 @@ const getReply = (client, event) => {
   if (event.message.type = 'text') {
     let replyText = "想問什麼";
     switch (client.status) {
-      case status.statusInit:
+      case status.STATUS_INIT:
         lineReply(event, "你可以問我關於天氣, 海洋");
-        client.status = status.statusStart;
+        client.status = status.STATUS_START;
         break;
 
-      case status.statusStart:
+      case status.STATUS_START:
         const text = event.message.text;
         let replyText = "我找不到相關資料";
         switch (text) {
           case "天氣":
-            client.status = status.statusWeather;
+            client.status = status.STATUS_WEATHER;
             replyText = "你想問哪個城市?";
             break;
 
           case "海洋":
-            client.status = status.statusOcean;
+            client.status = status.STATUS_OCEAN;
             replyText = "你想問哪個城市?";
             break;
 
           default:
-            client.status = status.statusInit;
+            client.status = status.STATUS_INIT;
             replyText = "想死嗎?";
             break;
         }
         lineReply(event, replyText);
         break;
 
-      case status.statusWeather:
-        client.status = status.statusInit;
+      case status.STATUS_WEATHER:
+        client.status = status.STATUS_INIT;
         getWeather(event);
         break;
 
-      case status.statusOcean:
-        client.status = status.statusInit;
+      case status.STATUS_OCEAN:
+        client.status = status.STATUS_INIT;
         lineReply(event, "我還沒做好, 你急屁");
         //goWeather.getSeaData();
         break;
 
-      case status.statusEnd:
+      case status.STATUS_END:
       default:
-        client.status = status.statusStart;
+        client.status = status.STATUS_START;
         break;
     }
   }
