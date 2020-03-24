@@ -1,7 +1,6 @@
 import idx from 'idx';
 
 export const oceanDataParser = (data) => {
-    console.log(data);
     let elements = {};
     const weatherElement = idx(data, _=>_.weatherElement);
 

@@ -43,25 +43,16 @@ export const getWeatherById = id => {
     });
 };
 
-// export const getSeaData = () => {
-//   hyperquest(
-//     `http://opendata.cwb.gov.tw/opendataapi?dataid=${data.seaData}&authorizationkey=${data.apiKey}`
-//   ).pipe(
-//     saxStream({
-//       strict: true,
-//       tag: "location"
-//     }).on("data", function(item) {
-//       console.log(Parser.oceanDataParser(item));
-//       //console.log(item);
-//     })
-//   );
-// };
-
 export const getSeaData = async () => {
-
   try {
-    const response = await axios.get(`http://opendata.cwb.gov.tw/opendataapi?dataid=${data.seaData}&authorizationkey=${data.apiKey}`);
-    console.log(response);
+    const response = await axios.get(
+      `https://opendata.cwb.gov.tw/api/v1/rest/datastore/${data.seaData}?authorizationkey=${data.apiKey}&format=JSON`
+    );
+          
+    console.log(response.data.records.location.forEach(loc => {
+      console.log(`${loc.locationName}: ${loc.stationId}`);
+    }));
+
   } catch (error) {
     console.error(error);
   }

@@ -5,30 +5,21 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Client = void 0;
 
-require("core-js/modules/es6.object.define-property");
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var Client = function Client(userId, _status) {
-  var _this = this;
+class Client {
+  constructor(userId, _status) {
+    _defineProperty(this, "getUser", () => this.user);
 
-  _classCallCheck(this, Client);
+    _defineProperty(this, "getStatus", () => this.status);
 
-  _defineProperty(this, "getUser", function () {
-    return _this.user;
-  });
+    _defineProperty(this, "setStatus", status => {
+      this.status = status;
+    });
 
-  _defineProperty(this, "getStatus", function () {
-    return _this.status;
-  });
+    this.user = userId, this.status = _status;
+  }
 
-  _defineProperty(this, "setStatus", function (status) {
-    _this.status = status;
-  });
-
-  this.user = userId, this.status = _status;
-};
+}
 
 exports.Client = Client;
