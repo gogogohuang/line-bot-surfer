@@ -30,7 +30,6 @@ bot.on('message', (event) => {
 
 const getReply = (client, event) => {
   if (event.message.type = 'text') {
-    let replyText = "想問什麼";
     switch (client.status) {
       case status.STATUS_INIT:
         lineReply(event, "你可以問我關於天氣, 海洋");

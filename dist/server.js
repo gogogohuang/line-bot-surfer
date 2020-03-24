@@ -1,40 +1,63 @@
-'use strict';
+"use strict";
 
-var _linebot = require('linebot');
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-var _linebot2 = _interopRequireDefault(_linebot);
+require("core-js/modules/es7.symbol.async-iterator");
 
-var _express = require('express');
+require("core-js/modules/es6.symbol");
 
-var _express2 = _interopRequireDefault(_express);
+require("core-js/modules/es6.object.define-property");
 
-var _weather = require('./weather');
+require("core-js/modules/es6.string.iterator");
 
-var goWeather = _interopRequireWildcard(_weather);
+require("core-js/modules/es6.weak-map");
 
-var _Common = require('./common/Common');
+require("core-js/modules/es6.function.name");
 
-var status = _interopRequireWildcard(_Common);
+require("core-js/modules/es6.regexp.match");
 
-var _Client = require('./common/Client');
+require("core-js/modules/web.dom.iterable");
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+require("core-js/modules/es6.array.iterator");
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+require("core-js/modules/es6.object.to-string");
 
-var bot = (0, _linebot2.default)({
+require("core-js/modules/es6.object.keys");
+
+require("core-js/modules/es6.array.map");
+
+require("core-js/modules/es6.array.filter");
+
+require("core-js/modules/es6.array.find");
+
+require("core-js/modules/es6.object.assign");
+
+var _linebot = _interopRequireDefault(require("linebot"));
+
+var _express = _interopRequireDefault(require("express"));
+
+var goWeather = _interopRequireWildcard(require("./weather"));
+
+var status = _interopRequireWildcard(require("./common/Common"));
+
+var _Client = require("./common/Client");
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+var bot = (0, _linebot["default"])({
   channelId: "1539958657",
   channelSecret: "e10b0956cb25191be66a7efe01131ea0",
   channelAccessToken: "liLIIlI5QQQ3FYSbY9kOtW6sREW+cH7Rmu1mGu72Ci3Fofv9H63h1Cwzx/UiHUJ1HHhkHwZon5MNNl8e37X3oYou47I2677QWLA6VT5km3RadMa2ln59k4IuKSfrBUHIOAYV5tTceqLhHzM/MVYQbgdB04t89/1O/w1cDnyilFU="
 });
-
 var gAllCity = goWeather.getAllCity().then(function (data) {
   Object.assign(gAllCity, data);
 });
-
 var gGoWeatherStatus = status.STATUS_INIT;
 var gClients = new Array();
-
 bot.on('message', function (event) {
   /**Add client */
   event.source.profile().then(function (profile) {
@@ -48,14 +71,13 @@ bot.on('message', function (event) {
         return client.user === profile.userId;
       }), event);
     }
-  }).catch(function (e) {
+  })["catch"](function (e) {
     console.log(e);
   });
 });
 
 var getReply = function getReply(client, event) {
   if (event.message.type = 'text') {
-    var replyText = "想問什麼";
     switch (client.status) {
       case status.STATUS_INIT:
         lineReply(event, "你可以問我關於天氣, 海洋");
@@ -64,24 +86,26 @@ var getReply = function getReply(client, event) {
 
       case status.STATUS_START:
         var text = event.message.text;
-        var _replyText = "我找不到相關資料";
+        var replyText = "我找不到相關資料";
+
         switch (text) {
           case "天氣":
             client.status = status.STATUS_WEATHER;
-            _replyText = "你想問哪個城市?";
+            replyText = "你想問哪個城市?";
             break;
 
           case "海洋":
             client.status = status.STATUS_OCEAN;
-            _replyText = "你想問哪個城市?";
+            replyText = "你想問哪個城市?";
             break;
 
           default:
             client.status = status.STATUS_INIT;
-            _replyText = "想死嗎?";
+            replyText = "想死嗎?";
             break;
         }
-        lineReply(event, _replyText);
+
+        lineReply(event, replyText);
         break;
 
       case status.STATUS_WEATHER:
@@ -91,8 +115,8 @@ var getReply = function getReply(client, event) {
 
       case status.STATUS_OCEAN:
         client.status = status.STATUS_INIT;
-        lineReply(event, "我還沒做好, 你急屁");
-        //goWeather.getSeaData();
+        lineReply(event, "我還沒做好, 你急屁"); //goWeather.getSeaData();
+
         break;
 
       case status.STATUS_END:
@@ -124,29 +148,29 @@ var getWeather = function getWeather(event) {
       return goWeather.weatherNowData(data, cityName);
     }).then(function (reply) {
       var replyText = reply;
-      event.reply(replyText).then(function (data) {}).catch(function (error) {
+      event.reply(replyText).then(function (data) {})["catch"](function (error) {
         console.log('error');
       });
     });
   } catch (e) {
     var replyText = "沒這個地方, 供三小啦!";
-    event.reply(replyText).then(function (data) {}).catch(function (error) {
+    event.reply(replyText).then(function (data) {})["catch"](function (error) {
       console.log('error');
     });
   }
+
   return 0;
 };
 
 var lineReply = function lineReply(event, text) {
-  event.reply(text).then(function (data) {}).catch(function (error) {
+  event.reply(text).then(function (data) {})["catch"](function (error) {
     console.log('error');
   });
 };
 
-var app = (0, _express2.default)();
+var app = (0, _express["default"])();
 var linebotParser = bot.parser();
 app.post('/', linebotParser);
-
 var server = app.listen(process.env.PORT || 8080, function () {
   var port = server.address().port;
   console.log("App now running on port", port);

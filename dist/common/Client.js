@@ -1,31 +1,34 @@
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
+exports.Client = void 0;
+
+require("core-js/modules/es6.object.define-property");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Client = exports.Client = function Client(userId, status) {
-    _classCallCheck(this, Client);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-    _initialiseProps.call(this);
+var Client = function Client(userId, _status) {
+  var _this = this;
 
-    this.user = userId, this.status = status;
+  _classCallCheck(this, Client);
+
+  _defineProperty(this, "getUser", function () {
+    return _this.user;
+  });
+
+  _defineProperty(this, "getStatus", function () {
+    return _this.status;
+  });
+
+  _defineProperty(this, "setStatus", function (status) {
+    _this.status = status;
+  });
+
+  this.user = userId, this.status = _status;
 };
 
-var _initialiseProps = function _initialiseProps() {
-    var _this = this;
-
-    this.getUser = function () {
-        return _this.user;
-    };
-
-    this.getStatus = function () {
-        return _this.status;
-    };
-
-    this.setStatus = function (status) {
-        _this.status = status;
-    };
-};
+exports.Client = Client;

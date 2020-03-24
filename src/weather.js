@@ -3,6 +3,7 @@ import * as data from "./common/V";
 import * as Parser from "./common/Parser";
 import saxStream from "sax-stream";
 import hyperquest from "hyperquest";
+import axios from "axios";
 
 export const getAllCity = () => {
   return fetch(`https://works.ioa.tw/weather/api/all.json`, {
@@ -42,18 +43,28 @@ export const getWeatherById = id => {
     });
 };
 
-export const getSeaData = () => {
-  hyperquest(
-    `http://opendata.cwb.gov.tw/opendataapi?dataid=${data.seaData}&authorizationkey=${data.apiKey}`
-  ).pipe(
-    saxStream({
-      strict: true,
-      tag: "location"
-    }).on("data", function(item) {
-      console.log(Parser.oceanDataParser(item));
-      //console.log(item);
-    })
-  );
+// export const getSeaData = () => {
+//   hyperquest(
+//     `http://opendata.cwb.gov.tw/opendataapi?dataid=${data.seaData}&authorizationkey=${data.apiKey}`
+//   ).pipe(
+//     saxStream({
+//       strict: true,
+//       tag: "location"
+//     }).on("data", function(item) {
+//       console.log(Parser.oceanDataParser(item));
+//       //console.log(item);
+//     })
+//   );
+// };
+
+export const getSeaData = async () => {
+
+  try {
+    const response = await axios.get(`http://opendata.cwb.gov.tw/opendataapi?dataid=${data.seaData}&authorizationkey=${data.apiKey}`);
+    console.log(response);
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 export const weatherNowData = (weather, location) => {
